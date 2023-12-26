@@ -1,5 +1,5 @@
 CC = gcc
-OBJ = main.o tree.o ui.o
+OBJ = node.o tree.o ui.o main.o 
 EXE = run
 
 all: $(EXE)

@@ -12,30 +12,50 @@ Node *node_new(char *key, char *content)
 
     newNode->key = key;
     newNode->content = content;
-    newNode->childrens = NULL;
-    newNode->childrensSize = 0;
+    newNode->childrens = (LinkedList *)malloc(sizeof(LinkedList));
     newNode->parent = NULL;
 
     return newNode;
 }
 
-void node_node_free(Node *node)
+void node_free(Node *node)
 {
     if (node == NULL)
     {
         return;
     }
-    
-    if (hasChildrens(node))
-    {
-        for (int i = 0; i < node->childrensSize; ++i)
-        {
-            node_free(node->childrens[i]);
-        }
-        free(node->childrens);
-    }
+
+    node_freeChildrens(node->childrens);
 
     free(node);
+}
+
+void node_freeChild(ListNode *child)
+{
+    if (child == NULL)
+    {
+        return;
+    }
+
+    free(child);
+}
+
+void node_freeChildrens(LinkedList *childrens)
+{
+    if (childrens == NULL)
+    {
+        return;
+    }
+
+    ListNode *current = childrens->head;
+    while (current)
+    {
+        ListNode *next = current->next;
+        node_freeChild(current);
+        current = next;
+    }
+
+    free(childrens);
 }
 
 int node_hasParent(Node *node)
@@ -45,55 +65,71 @@ int node_hasParent(Node *node)
 
 int node_hasChildrens(Node *node)
 {
-    return node != NULL && node->childrensSize > 0 ? 1 : 0;
+    return node != NULL && node->childrens->counts > 0 ? 1 : 0;
 }
 
 void node_addChildren(Node *node, Node *children)
 {
-    if (node->childrensSize == 0)
-    {
-        node->childrens = (Node **)malloc(sizeof(Node **) * node->childrensSize + 1);
-    }
-    else
-    {
-        node->childrens = (Node **)realloc(node->childrens, node->childrensSize + 1);
-    }
+    ListNode *newListNode = (ListNode *)malloc(sizeof(ListNode));
 
-    if (node->childrens == NULL)
+    if (newListNode != NULL)
     {
-        printf("[Error] Failed childrens allocation");
+        printf("[Error] Can't allocate new list node");
         return;
     }
 
-    node->childrens[node->childrensSize] = children;
-    node->childrensSize++;
-    children->parent = node;
+    newListNode->next = NULL;
+    newListNode->prev = NULL;
+    newListNode->node = node;
+
+    if (node->childrens->counts == 0)
+    {
+        node->childrens->head = newListNode;
+        node->childrens->tail = newListNode;
+    }
+    else
+    {
+        node->childrens->tail->next = newListNode;
+        newListNode->prev = node->childrens->tail;
+        node->childrens->tail = newListNode;
+    }
+
+    node->childrens->counts++;
 }
 
-void node_removeChildren(Node *node, Node *children)
+void node_removeChildren(Node *node, ListNode *children)
 {
-    int i, j;
-    Node *currentChild;
+    ListNode *current;
+    int i;
 
-    j = -1;
+    current = node->childrens->head;
 
-    for (i = 0; i < node->childrensSize; i++) {
-        if (node->childrens[i] == children) {
-            j = i;
+    for (i = 0; i < node->childrens->counts; i++)
+    {
+        if (current == children)
+        {
             break;
         }
     }
 
-    if (j == -1)
+    if (current->prev != NULL)
     {
-        return;
+        current->prev->next = current->next;
+    }
+    else
+    {
+        node->childrens->head = current->next;
     }
 
-    for (i = j; i < node->childrensSize - 1; i++) {
-        node->childrens[i] = node->childrens[i + 1];
+    if (current->next != NULL)
+    {
+        current->next->prev = current->prev;
+    }
+    else
+    {
+        node->childrens->tail = current->prev;
     }
 
-    node->childrens = (Node**)realloc(node->childrens, sizeof(Node*) * (node->childrensSize - 1));
-    node->childrensSize--;
-    node_free(children);
+    node_freeChild(current);
+    node->childrens->counts--;
 }

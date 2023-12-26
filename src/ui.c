@@ -1,8 +1,8 @@
 #include "ui.h"
 
-void ui_main_menu()
+void ui_mainMenu(Tree* tree)
 {
-    int menu_choice = ui_get_menu_choice();
+    int menu_choice = ui_getMenuChoice();
 
     if (menu_choice == -1)
     {
@@ -16,7 +16,7 @@ void ui_main_menu()
     }
     else if (menu_choice == 2)
     {
-        int partitionSize = ui_get_partition_size();
+        int partitionSize = ui_getPartitionSize();
 
         if (partitionSize == -1)
         {
@@ -29,7 +29,16 @@ void ui_main_menu()
     }
 }
 
-int ui_get_menu_choice()
+void ui_cmdMenu(Tree* tree){
+    Node* currentDir = tree->root;
+
+    while (1)
+    {
+        printf("\n");
+    }
+}
+
+int ui_getMenuChoice()
 {
     int option;
 
@@ -41,7 +50,7 @@ int ui_get_menu_choice()
     return option == 1 || option == 2 ? option : -1;
 }
 
-int ui_get_partition_size()
+int ui_getPartitionSize()
 {
     int partitionSize;
 

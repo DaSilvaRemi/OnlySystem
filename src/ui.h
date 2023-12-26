@@ -3,10 +3,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "tree.h"
 
-void ui_main_menu();
-int ui_get_menu_choice();
-int ui_get_partition_size();
+void ui_mainMenu(Tree* tree);
+int ui_getMenuChoice();
+int ui_getPartitionSize();
 void ui_help();
+
+void ui_cmdMenu(Tree* tree);
 
 #endif
