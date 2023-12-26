@@ -3,10 +3,15 @@
 Tree *tree_new()
 {
     Tree *tree = (Tree *)malloc(sizeof(Tree));
-    if (tree)
+    
+    if (tree == NULL)
     {
-        tree->root = NULL;
+        printf("[Error] Can't allocate a new tree");
+        return NULL;
     }
+
+    tree->root = NULL;
+
     return tree;
 }
 
@@ -31,7 +36,7 @@ void tree_addNode(Tree *tree, Node *parent, Node *newNode)
     {
         tree->root = newNode;
     }
-    else if (parent && node_hasChildrens(parent))
+    else if (parent)
     {
         node_addChildren(parent, newNode);
         newNode->parent = parent;
@@ -49,4 +54,21 @@ void tree_removeNode(Tree *tree, Node *node)
         node_free(tree->root);
         tree->root = NULL;
     }
+}
+
+LinkedList *tree_getReversePrefix(Node *node)
+{
+    Node *current;
+    LinkedList *reversePrefix;
+
+    reversePrefix = linkedList_new();
+    current = node;
+
+    do
+    {
+        linkedList_add(reversePrefix, (void *)current);
+        current = node->parent;
+    } while (current != NULL);
+
+    return reversePrefix;
 }

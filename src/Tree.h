@@ -13,4 +13,6 @@ void tree_free(Tree* tree);
 void tree_addNode(Tree* tree, Node* parent, Node* newNode);
 void tree_removeNode(Tree* tree, Node* node);
 
+LinkedList* tree_getReversePrefix(Node* node);
+
 #endif
