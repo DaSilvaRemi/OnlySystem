@@ -1,6 +1,6 @@
 #include "node.h"
 
-Node *node_new(char *key, char *content)
+Node *node_new(NodeData data)
 {
     Node *newNode = (Node *)malloc(sizeof(Node));
 
@@ -10,8 +10,7 @@ Node *node_new(char *key, char *content)
         return NULL;
     }
 
-    newNode->key = key;
-    newNode->content = content;
+    newNode->data = data;
     newNode->childrens = (LinkedList *)malloc(sizeof(LinkedList));
     newNode->parent = NULL;
 
@@ -25,37 +24,17 @@ void node_free(Node *node)
         return;
     }
 
-    node_freeChildrens(node->childrens);
-
-    free(node);
-}
-
-void node_freeChild(ListNode *child)
-{
-    if (child == NULL)
-    {
-        return;
-    }
-
-    free(child);
-}
-
-void node_freeChildrens(LinkedList *childrens)
-{
-    if (childrens == NULL)
-    {
-        return;
-    }
-
-    ListNode *current = childrens->head;
+    ListNode *current = node->childrens->head;
     while (current)
     {
         ListNode *next = current->next;
-        node_freeChild(current);
+        node_free((Node*) next->node);
         current = next;
     }
 
-    free(childrens);
+    linkedList_free(node->childrens);
+
+    free(node);
 }
 
 int node_hasParent(Node *node)
@@ -70,66 +49,20 @@ int node_hasChildrens(Node *node)
 
 void node_addChildren(Node *node, Node *children)
 {
-    ListNode *newListNode = (ListNode *)malloc(sizeof(ListNode));
-
-    if (newListNode != NULL)
-    {
-        printf("[Error] Can't allocate new list node");
-        return;
-    }
-
-    newListNode->next = NULL;
-    newListNode->prev = NULL;
-    newListNode->node = node;
-
-    if (node->childrens->counts == 0)
-    {
-        node->childrens->head = newListNode;
-        node->childrens->tail = newListNode;
-    }
-    else
-    {
-        node->childrens->tail->next = newListNode;
-        newListNode->prev = node->childrens->tail;
-        node->childrens->tail = newListNode;
-    }
-
-    node->childrens->counts++;
+    linkedList_add(node->childrens, (void*) children);
 }
 
-void node_removeChildren(Node *node, ListNode *children)
+void node_removeChildren(Node *node, Node *children)
 {
-    ListNode *current;
-    int i;
+   ListNode* childrenListNode;
+   childrenListNode = linkedList_findNode(node->childrens, (void*) children);
 
-    current = node->childrens->head;
+   if (childrenListNode == NULL)
+   {
+        printf("Children not found !");
+        return;
+   }
 
-    for (i = 0; i < node->childrens->counts; i++)
-    {
-        if (current == children)
-        {
-            break;
-        }
-    }
-
-    if (current->prev != NULL)
-    {
-        current->prev->next = current->next;
-    }
-    else
-    {
-        node->childrens->head = current->next;
-    }
-
-    if (current->next != NULL)
-    {
-        current->next->prev = current->prev;
-    }
-    else
-    {
-        node->childrens->tail = current->prev;
-    }
-
-    node_freeChild(current);
-    node->childrens->counts--;
+   node_free(children);
+   linkedList_del(node->childrens, childrenListNode);
 }
