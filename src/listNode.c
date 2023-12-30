@@ -3,7 +3,7 @@
 ListNode* listNode_new(void* node){
     ListNode* newListNode = (ListNode*)malloc(sizeof(ListNode));
 
-    if (newListNode != NULL) {
+    if (newListNode == NULL) {
         printf("[Error] Can't allocate new list node");
         return NULL;
     }
