@@ -11,6 +11,8 @@ LinkedList *linkedList_new()
     }
 
     newList->head = NULL;
+    newList->tail = NULL;
+    newList->counts = 0;
 
     return newList;
 }
@@ -95,13 +97,13 @@ void linkedList_free(LinkedList *list)
     }
 
     ListNode *current = list->head;
-    while (current)
+    while (current != NULL)
     {
         ListNode *next = current->next;
         listNode_free(current);
         current = next;
     }
-
+    
     free(list);
 }
 
