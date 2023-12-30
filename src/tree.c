@@ -39,7 +39,6 @@ void tree_addNode(Tree *tree, Node *parent, Node *newNode)
     else if (parent)
     {
         node_addChildren(parent, newNode);
-        newNode->parent = parent;
     }
 }
 
@@ -59,16 +58,16 @@ void tree_removeNode(Tree *tree, Node *node)
 LinkedList *tree_getReversePrefix(Node *node)
 {
     Node *current;
-    LinkedList *reversePrefix;
+    LinkedList *reversePrefix = NULL;
 
     reversePrefix = linkedList_new();
     current = node;
 
-    do
+    while (current != NULL)
     {
-        linkedList_add(reversePrefix, (void *)current);
-        current = node->parent;
-    } while (current != NULL);
+       linkedList_add(reversePrefix, (void *)current);
+       current = current->parent;
+    }
 
     return reversePrefix;
 }
