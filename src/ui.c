@@ -2,21 +2,11 @@
 
 void ui_mainMenu()
 {
-    Tree *fileSystem;
-    Node *root;
-    NodeData data;
+    Tree* fileSystem;
     int menu_choice;
 
-    fileSystem = tree_new();
-    data.key = "";
-    data.keyLength = 0;
-    data.content = NULL;
-    data.contentLength = 0;
-    data.nodeType = DIRECTORY_T;
-    root = node_new(data);
-    tree_addNode(fileSystem, NULL, root);
-
     menu_choice = ui_getMenuChoice();
+    fileSystem = fileSystem_init();
 
     if (menu_choice == -1)
     {
@@ -44,6 +34,8 @@ void ui_mainMenu()
         ui_help();
         ui_cmdMenu(fileSystem);
     }
+
+    tree_free(fileSystem);
 }
 
 int ui_getMenuChoice()
@@ -178,7 +170,7 @@ void ui_displayCurrentPath(Node *currentDir)
 {
     LinkedList *currentLinkedListPath;
 
-    currentLinkedListPath = tree_getReversePrefix(currentDir);
+    currentLinkedListPath = tree_getReversePreorder(currentDir);
     linkedList_reverse(currentLinkedListPath);
 
     ListNode *current = currentLinkedListPath->head;

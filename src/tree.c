@@ -55,7 +55,7 @@ void tree_removeNode(Tree *tree, Node *node)
     }
 }
 
-LinkedList *tree_getReversePrefix(Node *node)
+LinkedList *tree_getReversePreorder(Node *node)
 {
     Node *current;
     LinkedList *reversePrefix = NULL;
@@ -70,4 +70,32 @@ LinkedList *tree_getReversePrefix(Node *node)
     }
 
     return reversePrefix;
+}
+
+LinkedList* tree_getPostorder(Node* node){
+    LinkedList* postOrderLinkedList;
+    
+    postOrderLinkedList = linkedList_new();
+    tree_getPostorderRecursive(node, postOrderLinkedList);
+
+    return postOrderLinkedList;
+}
+
+void tree_getPostorderRecursive(Node* node, LinkedList* postOrderLinkedList){
+    if (node == NULL)
+    {
+        return;
+    }
+
+    ListNode* current;
+
+    current = node->childrens->head;
+
+    while (current != NULL)
+    {
+        tree_getPostorderRecursive((Node *) current->node, postOrderLinkedList);
+        current = current->next;
+    }
+
+    linkedList_add(postOrderLinkedList, (void*) node);
 }
