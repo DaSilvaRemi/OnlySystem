@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "linkedList.h"
 
 typedef enum nodeType
@@ -32,6 +33,7 @@ void node_free(Node *node);
 int node_hasParent(Node *node);
 int node_hasChildrens(Node *node);
 void node_addChildren(Node *node, Node *children);
+Node* node_findChildrenWithKey(Node *node, char* key);
 void node_removeChildren(Node *node, Node *children);
 
 #endif

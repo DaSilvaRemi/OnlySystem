@@ -11,7 +11,7 @@ Node *node_new(NodeData data)
     }
 
     newNode->data = data;
-    newNode->childrens = (LinkedList *)malloc(sizeof(LinkedList));
+    newNode->childrens = linkedList_new();
     newNode->parent = NULL;
 
     return newNode;
@@ -34,6 +34,13 @@ void node_free(Node *node)
 
     linkedList_free(node->childrens);
 
+    if (node->data.content != NULL)
+    {
+        free(node->data.content);
+    }
+
+    
+    free(node->data.key);
     free(node);
 }
 
@@ -50,6 +57,26 @@ int node_hasChildrens(Node *node)
 void node_addChildren(Node *node, Node *children)
 {
     linkedList_add(node->childrens, (void*) children);
+    children->parent = node;
+}
+
+Node* node_findChildrenWithKey(Node *node, char* key){
+    ListNode *current;
+    int i;
+
+    current = node->childrens->head;
+
+    while (current != NULL)
+    {
+        if (strcmp(((Node*) current->node)->data.key, key) == 0)
+        {
+            return (Node*) current->node;
+        }
+
+        current = current->next;
+    }
+    
+    return NULL;
 }
 
 void node_removeChildren(Node *node, Node *children)
