@@ -40,8 +40,9 @@ void ui_mainMenu()
             exit(1);
         }
 
-        printf("partition size = %d", partitionSize);
+        printf("partition size = %d\n", partitionSize);
         ui_help();
+        ui_cmdMenu(fileSystem);
     }
 }
 
@@ -50,8 +51,8 @@ int ui_getMenuChoice()
     int option;
 
     printf("options:\n");
-    printf("\t1. load from file");
-    printf("\t2. create new partition in memory");
+    printf("\t1. load from file\n");
+    printf("\t2. create new partition in memory\n");
     scanf("%d", &option);
 
     return option == 1 || option == 2 ? option : -1;
@@ -63,6 +64,7 @@ int ui_getPartitionSize()
 
     printf("Input size of a new partition (example 102400): ");
     scanf("%d", &partitionSize);
+    printf("\n");
 
     return partitionSize > 0 ? partitionSize : -1;
 }
@@ -83,9 +85,9 @@ void ui_help()
     printf("'exit and store img' \n");
 }
 
-void ui_cmdMenu(Tree *tree)
+void ui_cmdMenu(Tree *fileSystem)
 {
-    Node *currentDir = tree->root;
+    Node *currentDir = fileSystem->root;
     LinkedList *currentLinkedListPath;
     int cmdChoice;
 
@@ -103,11 +105,15 @@ void ui_cmdMenu(Tree *tree)
 
         if (cmdChoice == LS)
         {
-            // DO SOMETHING
+            fileSystem_ls(currentDir);
         }
         else if (cmdChoice == CD)
         {
-            // DO SOMETHING
+            char dirName[20];
+
+            scanf("%s", dirName);
+
+            fileSystem_cd(&currentDir, dirName);
         }
         else if (cmdChoice == RM)
         {
@@ -115,7 +121,11 @@ void ui_cmdMenu(Tree *tree)
         }
         else if (cmdChoice == MKDIR)
         {
-            // DO SOMETHING
+            char* dirName = (char*) malloc(sizeof(char) * 20);
+
+            scanf("%s", dirName);
+
+            fileSystem_mkdir(fileSystem, currentDir, dirName);
         }
         else if (cmdChoice == RMDIR)
         {
@@ -123,7 +133,11 @@ void ui_cmdMenu(Tree *tree)
         }
         else if (cmdChoice == PUT)
         {
-            // DO SOMETHING
+            char* fileName = (char*) malloc(sizeof(char) * 20);
+
+            scanf("%s", fileName);
+
+            fileSystem_put(fileSystem, currentDir, fileName);
         }
         else if (cmdChoice == GET)
         {
@@ -167,6 +181,8 @@ void ui_displayCurrentPath(Node *currentDir)
 
         current = current->next;
     }
+
+    linkedList_free(currentLinkedListPath);
 }
 
 int ui_getCmdChoice()
