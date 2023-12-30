@@ -117,7 +117,11 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == RM)
         {
-            // DO SOMETHING
+            char fileName[20];
+
+            scanf("%s", fileName);
+
+            fileSystem_rm(fileSystem, currentDir, fileName);
         }
         else if (cmdChoice == MKDIR)
         {
@@ -129,7 +133,11 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == RMDIR)
         {
-            // DO SOMETHING
+            char dirName[20];
+
+            scanf("%s", dirName);
+
+            fileSystem_rmdir(fileSystem, currentDir, dirName);
         }
         else if (cmdChoice == PUT)
         {
@@ -145,7 +153,11 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == CAT)
         {
-            // DO SOMETHING
+            char fileName[20];
+
+            scanf("%s", fileName);
+
+            fileSystem_cat(currentDir, fileName);
         }
         else if (cmdChoice == STATUS)
         {
@@ -153,7 +165,7 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == HELP)
         {
-            // DO SOMETHING
+            ui_help();
         }
         else if (cmdChoice == EXIT)
         {

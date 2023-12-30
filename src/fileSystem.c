@@ -34,6 +34,20 @@ void fileSystem_cd(Node** currentDir, char* dirName){
     *currentDir = newDir;
 }
 
+void fileSystem_rm(Tree* fileSystem, Node* currentDir, char* fileName){
+    Node* fileToRemove;
+
+    fileToRemove = node_findChildrenWithKey(currentDir, fileName);
+
+    if (fileToRemove == NULL || fileToRemove->data.nodeType != FILE_T)
+    {
+        printf("File not found !");
+        return;
+    }    
+
+    tree_removeNode(fileSystem, fileToRemove);
+}
+
 void fileSystem_mkdir(Tree* fileSystem, Node* currentDir, char* dirName){
     NodeData data;
     data.content = NULL;
@@ -44,6 +58,20 @@ void fileSystem_mkdir(Tree* fileSystem, Node* currentDir, char* dirName){
 
     Node* newNode = node_new(data);
     tree_addNode(fileSystem, currentDir, newNode);
+}
+
+void fileSystem_rmdir(Tree* fileSystem, Node* currentDir, char* dirName){
+    Node* dirToRemove;
+
+    dirToRemove = node_findChildrenWithKey(currentDir, dirName);
+
+    if (dirToRemove == NULL || dirToRemove->data.nodeType != DIRECTORY_T)
+    {
+        printf("Directory not found !");
+        return;
+    }    
+
+    tree_removeNode(fileSystem, dirToRemove);
 }
 
 void fileSystem_put(Tree* fileSystem, Node* currentDir, char* fileName){
@@ -73,4 +101,18 @@ void fileSystem_put(Tree* fileSystem, Node* currentDir, char* fileName){
 
     Node* newNode = node_new(data);
     tree_addNode(fileSystem, currentDir, newNode);
+}
+
+void fileSystem_cat(Node* currentDir, char* fileName){
+    Node* fileToRead;
+
+    fileToRead = node_findChildrenWithKey(currentDir, fileName);
+
+    if (fileToRead == NULL || fileToRead->data.nodeType != FILE_T)
+    {
+        printf("File not found !");
+        return;
+    }
+
+    printf("%s", fileToRead->data.content);    
 }

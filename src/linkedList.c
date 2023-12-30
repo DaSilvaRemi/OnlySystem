@@ -24,12 +24,14 @@ ListNode *linkedList_findNode(LinkedList *list, void *node)
 
     current = list->head;
 
-    for (i = 0; i < list->counts; i++)
+    while (current != NULL)
     {
         if (current->node == node)
         {
             return current;
         }
+
+        current = current->next;
     }
 
     return NULL;
@@ -99,7 +101,7 @@ void linkedList_free(LinkedList *list)
     ListNode *current = list->head;
     while (current != NULL)
     {
-        ListNode *next = current->next;
+        ListNode* next = current->next;
         listNode_free(current);
         current = next;
     }

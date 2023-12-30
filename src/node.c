@@ -27,8 +27,8 @@ void node_free(Node *node)
     ListNode *current = node->childrens->head;
     while (current)
     {
-        ListNode *next = current->next;
-        node_free((Node*) next->node);
+        ListNode* next = current->next;
+        node_free((Node*) current->node);
         current = next;
     }
 
@@ -39,8 +39,11 @@ void node_free(Node *node)
         free(node->data.content);
     }
 
+    if (node->data.key != NULL)
+    {
+        free(node->data.key);
+    }
     
-    free(node->data.key);
     free(node);
 }
 
