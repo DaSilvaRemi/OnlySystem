@@ -26,7 +26,8 @@ Tree* fileSystem_init(){
     }
 
     tree_addNode(fileSystem, NULL, root);
-    utils_createDir(PARTITION_DIR_NAME);
+    // utils_createDir(PARTITION_DIR_NAME);
+    utils_createDir(DUMP_DIR_NAME);
 
     return fileSystem;
 }
@@ -82,22 +83,22 @@ void fileSystem_rm(Tree *fileSystem, Node *currentDir, char *fileName)
         return;
     }
 
-    char *fullPath = fileSystem_getFullRealPathOfANode(fileToRemove);
+    // char *fullPath = fileSystem_getFullRealPathOfANode(fileToRemove);
 
-    if (fullPath == NULL)
-    {
-        printf("Error by generating the full path of the file");
-        return;
-    }
+    // if (fullPath == NULL)
+    // {
+    //     printf("Error by generating the full path of the file");
+    //     return;
+    // }
 
-    if (utils_deleteFile(fullPath) == 0)
-    {
-        printf("Can't remove the file on your system !");
-        free(fullPath);
-        return;
-    }
+    // if (utils_deleteFile(fullPath) == 0)
+    // {
+    //     printf("Can't remove the file on your system !");
+    //     free(fullPath);
+    //     return;
+    // }
 
-    free(fullPath);
+    // free(fullPath);
     tree_removeNode(fileSystem, fileToRemove);
 }
 
@@ -118,18 +119,18 @@ void fileSystem_mkdir(Tree *fileSystem, Node *currentDir, char *dirName)
     Node *newNode = node_new(data);
     tree_addNode(fileSystem, currentDir, newNode);
 
-    char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
+    // char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
 
-    if (fullPath == NULL)
-    {
-        printf("Error by generating the full path of the file");
-        return;
-    }
+    // if (fullPath == NULL)
+    // {
+    //     printf("Error by generating the full path of the file");
+    //     return;
+    // }
 
-    if (utils_createDir(fullPath) == 0)
-    {
-        printf("Failed to create the directory on your computer !");
-    }
+    // if (utils_createDir(fullPath) == 0)
+    // {
+    //     printf("Failed to create the directory on your computer !");
+    // }
 }
 
 void fileSystem_rmdir(Tree *fileSystem, Node *currentDir, char *dirName)
@@ -147,31 +148,31 @@ void fileSystem_rmdir(Tree *fileSystem, Node *currentDir, char *dirName)
         return;
     }
 
-    current = dirToRemove->childrens->head;
+    // current = dirToRemove->childrens->head;
     
-    while (current != NULL)
-    {
-        if (((Node*) current->node)->data.nodeType == DIRECTORY_T)
-        {
-            fileSystem_rmdir(fileSystem, dirToRemove, ((Node*) current->node)->data.key);
-        }
-        else
-        {
-            fileSystem_rm(fileSystem, dirToRemove, ((Node*) current->node)->data.key);
-        }
+    // while (current != NULL)
+    // {
+    //     if (((Node*) current->node)->data.nodeType == DIRECTORY_T)
+    //     {
+    //         fileSystem_rmdir(fileSystem, dirToRemove, ((Node*) current->node)->data.key);
+    //     }
+    //     else
+    //     {
+    //         fileSystem_rm(fileSystem, dirToRemove, ((Node*) current->node)->data.key);
+    //     }
 
-        current = current->next;
-    }
+    //     current = current->next;
+    // }
     
-    fullPath = fileSystem_getFullRealPathOfANode(dirToRemove);
+    // fullPath = fileSystem_getFullRealPathOfANode(dirToRemove);
     
-    if (utils_removeEmptyDir(fullPath) == 0)
-    {
-        printf("Can't delete this dir !");
-        return;
-    }
+    // if (utils_removeEmptyDir(fullPath) == 0)
+    // {
+    //     printf("Can't delete this dir !");
+    //     return;
+    // }
     
-    free(fullPath);
+    // free(fullPath);
     tree_removeNode(fileSystem, dirToRemove);
 }
 
@@ -203,7 +204,34 @@ void fileSystem_put(Tree *fileSystem, Node *currentDir, char *fileName)
     Node *newNode = node_new(data);
     tree_addNode(fileSystem, currentDir, newNode);
 
-    char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
+    // char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
+
+    // if (fullPath == NULL)
+    // {
+    //     printf("Error by generating the full path of the file");
+    //     return;
+    // }
+
+    // if (utils_writeFile(fullPath, fileContent) == 0)
+    // {
+    //     printf("Failed to write this file on your computer !");
+    // }
+}
+
+void fileSystem_get(Node *currentDir, char *fileName){
+    Node* fileToDump;
+    char *fullPath;
+
+    fileToDump = node_findChildrenWithKey(currentDir, fileToDump);
+
+    if (fileToDump == NULL || fileToDump->data.nodeType != FILE_T)
+    {
+        printf("parent : %s \n", currentDir->data.key);
+        printf("File %s not found !\n", fileToDump);
+        return;
+    }
+
+    fullPath = utils_concatSTR(DUMP_DIR_NAME, fileToDump->data.key);
 
     if (fullPath == NULL)
     {
@@ -211,7 +239,7 @@ void fileSystem_put(Tree *fileSystem, Node *currentDir, char *fileName)
         return;
     }
 
-    if (utils_writeFile(fullPath, fileContent) == 0)
+    if (utils_writeFile(fullPath, fileToDump->data.content) == 0)
     {
         printf("Failed to write this file on your computer !");
     }
@@ -244,7 +272,7 @@ char *fileSystem_getFullRealPathOfANode(Node *node)
     linkedList_reverse(reversePreorder);
 
     current = reversePreorder->head;
-    fullPath = DUMP_DIR_NAME;
+    fullPath = PARTITION_DIR_NAME;
 
     while (current != NULL)
     {

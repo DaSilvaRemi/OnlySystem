@@ -17,6 +17,7 @@ void fileSystem_rmdir(Tree* fileSystem, Node* currentDir, char* dirName);
 void fileSystem_put(Tree* fileSystem, Node* currentDir, char* fileName);
 void fileSystem_get();
 void fileSystem_cat(Node* currentDir, char* fileName);
+void fileSystem_status();
 void fileSystem_exit();
 char* fileSystem_getFullRealPathOfANode(Node* node);
 
