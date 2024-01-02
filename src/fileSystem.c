@@ -26,7 +26,7 @@ Tree* fileSystem_init(){
     }
 
     tree_addNode(fileSystem, NULL, root);
-    utils_createDir(DUMP_DIR_NAME);
+    utils_createDir(PARTITION_DIR_NAME);
 
     return fileSystem;
 }

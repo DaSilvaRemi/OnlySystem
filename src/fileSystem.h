@@ -6,6 +6,7 @@
 #include "tree.h"
 
 #define DUMP_DIR_NAME "dump"
+#define PARTITION_DIR_NAME "partition"
 
 Tree* fileSystem_init();
 void fileSystem_ls(Node* currentDir);
