@@ -44,12 +44,19 @@ void tree_addNode(Tree *tree, Node *parent, Node *newNode)
 
 void tree_removeNode(Tree *tree, Node *node)
 {
+    if (node == NULL)
+    {
+        return;
+    }
+    
+
     if (node_hasParent(node))
     {
         node_removeChildren(node->parent, node);
     }
     else if (node == tree->root)
     {
+        printf("Here");
         node_free(tree->root);
         tree->root = NULL;
     }

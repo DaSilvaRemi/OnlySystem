@@ -25,7 +25,7 @@ void node_free(Node *node)
     }
 
     ListNode *current = node->childrens->head;
-    while (current)
+    while (current != NULL)
     {
         ListNode* next = current->next;
         node_free((Node*) current->node);

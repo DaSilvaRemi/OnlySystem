@@ -2,11 +2,10 @@
 
 void ui_mainMenu()
 {
-    Tree* fileSystem;
+    FileSystem* fileSystem;
     int menu_choice;
 
     menu_choice = ui_getMenuChoice();
-    fileSystem = fileSystem_init();
 
     if (menu_choice == -1)
     {
@@ -16,13 +15,14 @@ void ui_mainMenu()
 
     if (menu_choice == 1)
     {
-        /* code */
+      fileSystem = fileSystem_readFile("my_fs.dump");
     }
     else if (menu_choice == 2)
     {
         int partitionSize;
 
         partitionSize = ui_getPartitionSize();
+        fileSystem = fileSystem_new(partitionSize);
 
         if (partitionSize == -1)
         {
@@ -31,11 +31,12 @@ void ui_mainMenu()
         }
 
         printf("partition size = %d\n", partitionSize);
-        ui_help();
-        ui_cmdMenu(fileSystem);
     }
 
-    tree_free(fileSystem);
+    ui_help();
+    ui_cmdMenu(fileSystem);
+
+    //fileSystem_free(fileSystem);
 }
 
 int ui_getMenuChoice()
@@ -74,12 +75,12 @@ void ui_help()
     printf("'cat' show content \n");
     printf("'status' show status of the space \n");
     printf("'help' \n");
-    printf("'exit and store img' \n");
+    printf("'exit' exit and store img' \n");
 }
 
-void ui_cmdMenu(Tree *fileSystem)
+void ui_cmdMenu(FileSystem *fileSystem)
 {
-    Node *currentDir = fileSystem->root;
+    Node *currentDir = fileSystem->treeFileSystem->root;
     LinkedList *currentLinkedListPath;
     int cmdChoice;
 
@@ -141,7 +142,11 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == GET)
         {
-            // DO SOMETHING
+            char fileName[20];
+
+            scanf("%s", fileName);
+
+            fileSystem_get(currentDir, fileName);
         }
         else if (cmdChoice == CAT)
         {
@@ -153,7 +158,7 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == STATUS)
         {
-            // DO SOMETHING
+            fileSystem_status(fileSystem);
         }
         else if (cmdChoice == HELP)
         {
@@ -161,7 +166,7 @@ void ui_cmdMenu(Tree *fileSystem)
         }
         else if (cmdChoice == EXIT)
         {
-            // DO SOMETHING
+            fileSystem_exit(fileSystem);
         }
     }
 }
@@ -236,7 +241,7 @@ int ui_getCmdChoice()
     {
         return HELP;
     }
-    else if (strcmp(cmdChoice, "exit and store img") == 0)
+    else if (strcmp(cmdChoice, "exit") == 0)
     {
         return EXIT;
     }
