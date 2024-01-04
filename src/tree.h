@@ -14,6 +14,8 @@ void tree_addNode(Tree* tree, Node* parent, Node* newNode);
 void tree_removeNode(Tree* tree, Node* node);
 
 LinkedList* tree_getReversePreorder(Node* node);
+LinkedList* tree_getPreorder(Node* node);
+void tree_getPreorderRecursive(Node* node, LinkedList* postOrderLinkedList);
 LinkedList* tree_getPostorder(Node* node);
 void tree_getPostorderRecursive(Node* node, LinkedList* postOrderLinkedList);
 

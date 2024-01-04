@@ -32,7 +32,7 @@ void tree_free(Tree *tree)
 
 void tree_addNode(Tree *tree, Node *parent, Node *newNode)
 {
-    if (!tree->root)
+    if (tree->root == NULL)
     {
         tree->root = newNode;
     }
@@ -56,7 +56,6 @@ void tree_removeNode(Tree *tree, Node *node)
     }
     else if (node == tree->root)
     {
-        printf("Here");
         node_free(tree->root);
         tree->root = NULL;
     }
@@ -77,6 +76,34 @@ LinkedList *tree_getReversePreorder(Node *node)
     }
 
     return reversePrefix;
+}
+
+LinkedList* tree_getPreorder(Node* node){
+    LinkedList* preorderLinkedList;
+    
+    preorderLinkedList = linkedList_new();
+    tree_getPreorderRecursive(node, preorderLinkedList);
+
+    return preorderLinkedList;
+}
+
+void tree_getPreorderRecursive(Node* node, LinkedList* preorderLinkedList){
+    if (node == NULL)
+    {
+        return;
+    }
+
+    ListNode* current;
+
+    current = node->childrens->head;
+
+    linkedList_add(preorderLinkedList, (void*) node);
+
+    while (current != NULL)
+    {
+        tree_getPreorderRecursive((Node *) current->node, preorderLinkedList);
+        current = current->next;
+    }
 }
 
 LinkedList* tree_getPostorder(Node* node){

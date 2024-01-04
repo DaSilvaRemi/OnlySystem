@@ -36,7 +36,7 @@ void ui_mainMenu()
     ui_help();
     ui_cmdMenu(fileSystem);
 
-    //fileSystem_free(fileSystem);
+    fileSystem_free(fileSystem);
 }
 
 int ui_getMenuChoice()
@@ -166,7 +166,8 @@ void ui_cmdMenu(FileSystem *fileSystem)
         }
         else if (cmdChoice == EXIT)
         {
-            fileSystem_exit(fileSystem);
+            fileSystem_exit(fileSystem, "my_fs.dump");
+            break;
         }
     }
 }

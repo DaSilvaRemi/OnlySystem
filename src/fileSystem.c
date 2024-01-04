@@ -36,7 +36,7 @@ FileSystem* fileSystem_new(int partitionSize){
     }
 
     tree_addNode(fileSystem->treeFileSystem, NULL, root);
-    // utils_createDir(PARTITION_DIR_NAME);
+    utils_createDir(PARTITION_DIR_NAME);
     utils_createDir(DUMP_DIR_NAME);
 
     fileSystem->partitionSize = partitionSize;
@@ -106,55 +106,59 @@ void fileSystem_rm(FileSystem* fileSystem, Node *currentDir, char *fileName)
         return;
     }
 
-    // char *fullPath = fileSystem_getFullRealPathOfANode(fileToRemove);
+    char *fullPath = fileSystem_getFullRealPathOfANode(fileToRemove);
 
-    // if (fullPath == NULL)
-    // {
-    //     printf("Error by generating the full path of the file");
-    //     return;
-    // }
+    if (fullPath == NULL)
+    {
+        printf("Error by generating the full path of the file");
+        return;
+    }
 
-    // if (utils_deleteFile(fullPath) == 0)
-    // {
-    //     printf("Can't remove the file on your system !");
-    //     free(fullPath);
-    //     return;
-    // }
+    if (utils_deleteFile(fullPath) == 0)
+    {
+        printf("Can't remove the file on your system !");
+        free(fullPath);
+        return;
+    }
 
-    // free(fullPath);
+    free(fullPath);
     fileSystem->usedCapacity -= fileToRemove->data.contentLength;
     tree_removeNode(fileSystem->treeFileSystem, fileToRemove);
 }
 
 void fileSystem_mkdir(FileSystem* fileSystem, Node *currentDir, char *dirName)
 {
+    char *fullPath;
+    NodeData data;
+    Node *newNode;
+
+
     if(node_findChildrenWithKey(currentDir, dirName) != NULL){
         printf("Directory already exist in this dir can't put it in memory !");
         return;
     }
 
-    NodeData data;
     data.content = NULL;
     data.contentLength = 0;
     data.key = dirName;
     data.keyLength = strlen(dirName);
     data.nodeType = DIRECTORY_T;
 
-    Node *newNode = node_new(data);
+    newNode = node_new(data);
     tree_addNode(fileSystem->treeFileSystem, currentDir, newNode);
 
-    // char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
+    fullPath = fileSystem_getFullRealPathOfANode(newNode);
 
-    // if (fullPath == NULL)
-    // {
-    //     printf("Error by generating the full path of the file");
-    //     return;
-    // }
+    if (fullPath == NULL)
+    {
+        printf("Error by generating the full path of the file");
+        return;
+    }
 
-    // if (utils_createDir(fullPath) == 0)
-    // {
-    //     printf("Failed to create the directory on your computer !");
-    // }
+    if (utils_createDir(fullPath) == 0)
+    {
+        printf("Failed to create the directory on your computer !");
+    }
 }
 
 void fileSystem_rmdir(FileSystem* fileSystem, Node *currentDir, char *dirName)
@@ -187,15 +191,15 @@ void fileSystem_rmdir(FileSystem* fileSystem, Node *currentDir, char *dirName)
         current = current->next;
     }
     
-    // fullPath = fileSystem_getFullRealPathOfANode(dirToRemove);
+    fullPath = fileSystem_getFullRealPathOfANode(dirToRemove);
     
-    // if (utils_removeEmptyDir(fullPath) == 0)
-    // {
-    //     printf("Can't delete this dir !");
-    //     return;
-    // }
+    if (utils_removeEmptyDir(fullPath) == 0)
+    {
+        printf("Can't delete this dir !");
+        return;
+    }
     
-    // free(fullPath);
+    free(fullPath);
     tree_removeNode(fileSystem->treeFileSystem, dirToRemove);
 }
 
@@ -203,6 +207,7 @@ void fileSystem_put(FileSystem* fileSystem, Node *currentDir, char *fileName)
 {
     char* fileContent;
     int fileSize;
+    NodeData data;
 
     if(node_findChildrenWithKey(currentDir, fileName) != NULL){
         printf("File already exist in this dir can't put it in memory !");
@@ -217,7 +222,6 @@ void fileSystem_put(FileSystem* fileSystem, Node *currentDir, char *fileName)
         return;
     }
     
-    NodeData data;
     data.content = fileContent;
     data.contentLength = fileSize + 1;
     data.key = fileName;
@@ -234,23 +238,24 @@ void fileSystem_put(FileSystem* fileSystem, Node *currentDir, char *fileName)
     tree_addNode(fileSystem->treeFileSystem, currentDir, newNode);
     fileSystem->usedCapacity += newNode->data.contentLength;
 
-    // char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
+    char *fullPath = fileSystem_getFullRealPathOfANode(newNode);
 
-    // if (fullPath == NULL)
-    // {
-    //     printf("Error by generating the full path of the file");
-    //     return;
-    // }
+    if (fullPath == NULL)
+    {
+        printf("Error by generating the full path of the file");
+        return;
+    }
 
-    // if (utils_writeFile(fullPath, fileContent) == 0)
-    // {
-    //     printf("Failed to write this file on your computer !");
-    // }
+    if (utils_writeFile(fullPath, fileContent) == 0)
+    {
+        printf("Failed to write this file on your computer !");
+    }
 }
 
 void fileSystem_get(Node *currentDir, char *fileName){
     Node* fileToDump;
     char *fullPath;
+    char* tmp;
 
     fileToDump = node_findChildrenWithKey(currentDir, fileName);
 
@@ -260,7 +265,7 @@ void fileSystem_get(Node *currentDir, char *fileName){
         return;
     }
 
-    char* tmp = utils_concatSTR(DUMP_DIR_NAME, "/");
+    tmp = utils_concatSTR(DUMP_DIR_NAME, "/");
     fullPath = utils_concatSTR(tmp, fileToDump->data.key);
 
     if (fullPath == NULL)
@@ -296,6 +301,8 @@ void fileSystem_status(FileSystem* fileSystem){
 }
 
 void filesystem_writeNodeToFile(FILE* file, Node* node) {
+    ListNode* current;
+    
     if (node == NULL) {
         return;
     }
@@ -314,7 +321,7 @@ void filesystem_writeNodeToFile(FILE* file, Node* node) {
 
     fwrite(&node->childrens->counts, sizeof(int), 1, file);
 
-    ListNode* current = node->childrens->head;
+    current = node->childrens->head;
 
     while (current != NULL) {
         filesystem_writeNodeToFile(file, (Node*)current->node);
@@ -323,8 +330,9 @@ void filesystem_writeNodeToFile(FILE* file, Node* node) {
 }
 
 
-void fileSystem_exit(FileSystem* fileSystem){
-    FILE* file = fopen("my_fs.dump", "wb");
+void fileSystem_exit(FileSystem* fileSystem, char* outputFileName){
+    ListNode* current;
+    FILE* file = fopen(outputFileName, "wb");
 
     if (file == NULL)
     {
@@ -337,13 +345,36 @@ void fileSystem_exit(FileSystem* fileSystem){
     filesystem_writeNodeToFile(file, fileSystem->treeFileSystem->root);
     fclose(file);
 
-    printf("FileSystem saved to '%s' successfully.\n", "my_fs.dump");
+    printf("FileSystem saved to '%s' successfully.\n", outputFileName);
+
+    current = fileSystem->treeFileSystem->root->childrens->head;
+
+    while (current != NULL)
+    {
+        if (((Node*) current->node)->data.nodeType == DIRECTORY_T)
+        {
+            fileSystem_rmdir(fileSystem, fileSystem->treeFileSystem->root, ((Node*) current->node)->data.key);
+        }
+        else
+        {
+            fileSystem_rm(fileSystem, fileSystem->treeFileSystem->root, ((Node*) current->node)->data.key);
+        }
+
+        current = current->next;
+    }
+    
+    if (utils_removeEmptyDir(PARTITION_DIR_NAME) == 0)
+    {
+        printf("Can't delete partition dir !");
+        return;
+    }
 }
 
 FileSystem* fileSystem_readFile(const char* fileName) {
     FileSystem* fileSystem;
     int partitionSize, usedCapacity;
     FILE* binaryDumpFile;
+    ListNode current;
 
     binaryDumpFile = fopen(fileName, "rb");
     
@@ -361,6 +392,8 @@ FileSystem* fileSystem_readFile(const char* fileName) {
     fileSystem->usedCapacity = usedCapacity;
     tree_addNode(fileSystem->treeFileSystem, NULL, fileSystem_readNodeFromFile(binaryDumpFile)); 
     fclose(binaryDumpFile);
+
+    fileSystem_recreatePhysicalPartition(fileSystem->treeFileSystem);
 
     return fileSystem;
 }
@@ -402,6 +435,49 @@ Node* fileSystem_readNodeFromFile(FILE* file) {
     }
 
     return newNode;
+}
+
+void fileSystem_recreatePhysicalPartition(Tree* treefileSystem){
+    LinkedList* preorderLinkedList;
+    ListNode* current;
+
+    preorderLinkedList = tree_getPreorder(treefileSystem->root);
+
+    current = preorderLinkedList->head;
+
+    while (current != NULL)
+    {
+        if (node_hasParent((Node*) current->node) == 1)
+        {
+            char* fullPath;
+
+            if (((Node*) current->node)->data.nodeType == DIRECTORY_T)
+            {
+                fullPath = fileSystem_getFullRealPathOfANode((Node*) current->node);
+
+                if (utils_createDir(fullPath) == 0)
+                {
+                    printf("Failed to create the directory on your computer ! %s", fullPath);
+                    return;
+                }
+            }
+            else
+            {
+                fullPath = fileSystem_getFullRealPathOfANode((Node*) current->node);
+
+                if(utils_writeFile(fullPath, ((Node*) current->node)->data.content) == 0)
+                {
+                    printf("Failed to create the file on your computer !");
+                    return;
+                }
+            }
+            free(fullPath);
+        }
+
+        current = current->next;
+    }
+    
+    linkedList_free(preorderLinkedList);
 }
 
 char *fileSystem_getFullRealPathOfANode(Node *node)

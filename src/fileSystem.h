@@ -26,10 +26,11 @@ void fileSystem_put(FileSystem* fileSystem, Node* currentDir, char* fileName);
 void fileSystem_get(Node *currentDir, char *fileName);
 void fileSystem_cat(Node* currentDir, char* fileName);
 void fileSystem_status(FileSystem* fileSystem);
-void fileSystem_exit(FileSystem* fileSystem);
+void fileSystem_exit(FileSystem* fileSystem, char* outputFileName);
 void filesystem_writeNodeToFile(FILE* file, Node* node);
 FileSystem* fileSystem_readFile(const char* fileName);
 Node* fileSystem_readNodeFromFile(FILE* file);
+void fileSystem_recreatePhysicalPartition(Tree* treefileSystem);
 char* fileSystem_getFullRealPathOfANode(Node* node);
 
 #endif
