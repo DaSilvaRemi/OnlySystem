@@ -14,11 +14,11 @@ typedef enum cmdChoice {
     MKDIR,
     RMDIR,
     PUT,
-    GET, //to do
+    GET,
     CAT,
-    STATUS, //to do
+    STATUS,
     HELP,
-    EXIT //to do
+    EXIT
 } CMDChoice;
 
 void ui_mainMenu();
